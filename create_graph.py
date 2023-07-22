@@ -1,9 +1,20 @@
 """Create NetworkX graph from data in csv file."""
+import os
 import pandas as pd
 import networkx as nx
 
+from get_data import fetch_ged, parse_ged
+
 def get_graph():
     """Create NetworkX graph from data in csv file."""
+    # check if csv file exists
+    if not os.path.isfile('data/royal92.csv'):
+        # fetch gedcom file
+        fetch_ged()
+
+        # parse gedcom file and save data to csv
+        parse_ged()
+
     # read csv file
     df = pd.read_csv('data/royal92.csv')
 

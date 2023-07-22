@@ -3,12 +3,8 @@ import streamlit as st
 import networkx as nx
 from plotly import graph_objects as go
 
-from get_data import fetch_ged, parse_ged
 from create_graph import get_graph
 
-# fetch and parse gedcom file
-fetch_ged()
-parse_ged()
 
 # load graph and positions
 @st.cache_data
