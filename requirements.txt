@@ -1,4 +1,6 @@
 ipykernel
-networkx
 pandas
+networkx
+plotly
 python-gedcom
+streamlit
