@@ -1,6 +1,9 @@
 ipykernel
 pandas
+matplotlib
 networkx
 plotly
 python-gedcom
+requests
+scipy
 streamlit

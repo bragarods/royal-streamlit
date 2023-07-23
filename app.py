@@ -1,6 +1,5 @@
 """Streamlit App for the project."""
 import streamlit as st
-import networkx as nx
 from plotly import graph_objects as go
 
 from create_graph import get_graph
@@ -71,61 +70,78 @@ select_nodes = st.sidebar.multiselect(
 
 # create plot
 if show_graph:
-    # create figure
-    fig = go.Figure()
+    # check if nodes are selected
+    if len(select_nodes) > 0:
+        pass
+    else:
+        # limit nodes from slider
+        if num_nodes == 0:
+            st.warning('No nodes selected.')
+            st.stop()
+        elif num_nodes > 100:
+            st.warning('Too many nodes selected.')
+            st.stop()
+        elif num_nodes > 0:
+            select_nodes = list(G.nodes())[:num_nodes]
 
-    # limit nodes from slider
-    if num_nodes == 0:
-        st.warning('No nodes selected.')
-        st.stop()
-    elif num_nodes > 100:
-        st.warning('Too many nodes selected.')
-        st.stop()
-    elif num_nodes > 0:
-        nodes = list(G.nodes())[:num_nodes]
+    # get all neighbors of selected nodes
+    nodes = []
+    neighbors = []
+    for node in select_nodes:
+        nodes.append(node)
+        neighbors.extend(G.neighbors(node))
+
+    # all nodes
+    all_nodes = nodes + neighbors
 
     # get edges from nodes
     edges = G.edges(nodes)
 
     # create node trace
+    node_x = []
+    node_y = []
+
+    for node in all_nodes:
+        x, y = pos[node]
+        node_x.append(x)
+        node_y.append(y)
+
     node_trace = go.Scatter(
-        x=[],
-        y=[],
-        text=[],
+        x=node_x,
+        y=node_y,
         mode='markers',
         hoverinfo='text',
         marker={
-            'size': 10,
-            'line_width': 2
-        }
+            'size': 15,
+        },
+        line_width=2
     )
 
-    # create edge trace
+    # add edges to edge trace
+    edge_x = []
+    edge_y = []
+
+    for edge in edges:
+        x0, y0 = pos[edge[0]]
+        x1, y1 = pos[edge[1]]
+        edge_x.append(x0)
+        edge_x.append(x1)
+        edge_x.append(None)
+        edge_y.append(y0)
+        edge_y.append(y1)
+        edge_y.append(None)
+
+        # create edge trace
     edge_trace = go.Scatter(
-        x=[],
-        y=[],
-        line={'width': 0.5, 'color': '#888'},
+        x=edge_x,
+        y=edge_y,
+        line={'width': 1, 'color': '#888'},
         hoverinfo='none',
         mode='lines'
     )
 
-    # add nodes to node trace
-    for node in nodes:
-        x, y = pos[node]
-        node_trace['x'] += tuple([x])
-        node_trace['y'] += tuple([y])
-
-    # add edges to edge trace
-    for edge in edges:
-        x0, y0 = pos[edge[0]]
-        x1, y1 = pos[edge[1]]
-        edge_trace['x'] += tuple([x0, x1, None])
-        edge_trace['y'] += tuple([y0, y1, None])
-
-    # add hover text to node trace
-    for node, adjacencies in enumerate(G.adjacency()):
-        node_info = f'{adjacencies[0]} - # of connections: {len(adjacencies[1])}'
-        node_trace['text'] += tuple([node_info])
+    # create figure
+    fig = go.Figure()
 
     # add node trace to figure
     fig.add_trace(node_trace)
