@@ -1,9 +1,13 @@
 """Get data from the web and save it locally."""
 # imports
+import os
 import pandas as pd
 import requests
 from gedcom.parser import Parser
 from gedcom.element.individual import IndividualElement
+
+FILE_PATH = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(FILE_PATH, '..', 'data')
 
 def fetch_ged():
     """Fetch gedcom file from the web."""
@@ -14,7 +18,7 @@ def fetch_ged():
         )
 
     # save gedcom file locally
-    with open('data/royal92.ged', 'wb') as ged:
+    with open(DATA_PATH + 'royal92.ged', 'wb') as ged:
         ged.write(r.content)
 
 
@@ -22,7 +26,7 @@ def parse_ged():
     """Parse gedcom file and save data to csv."""
     # parse gedcom file an generate dataframe
     gedcom_parser = Parser()
-    gedcom_parser.parse_file('data/royal92.ged')
+    gedcom_parser.parse_file(DATA_PATH + 'royal92.ged')
 
     root_child_elements = gedcom_parser.get_root_child_elements()
 
@@ -83,7 +87,7 @@ def parse_ged():
             )
 
     # save dataframe to csv
-    df.to_csv('data/royal92.csv', index=False)
+    df.to_csv(DATA_PATH + 'royal92.csv', index=False)
 
 
 if __name__ == '__main__':

@@ -7,8 +7,11 @@ from get_data import fetch_ged, parse_ged
 
 def get_graph():
     """Create NetworkX graph from data in csv file."""
+    # get file path
+    file_path = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(file_path, '..', 'data')
     # check if csv file exists
-    if not os.path.isfile('data/royal92.csv'):
+    if not os.path.isfile(data_path + 'royal92.csv'):
         # fetch gedcom file
         fetch_ged()
 
@@ -16,7 +19,7 @@ def get_graph():
         parse_ged()
 
     # read csv file
-    df = pd.read_csv('data/royal92.csv')
+    df = pd.read_csv(data_path + 'royal92.csv')
 
     # create graph
     G = nx.Graph()
